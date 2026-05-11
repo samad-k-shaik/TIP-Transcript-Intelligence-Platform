@@ -3,34 +3,20 @@
 [![GCP Native](https://img.shields.io/badge/GCP-Native-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white)](https://cloud.google.com)
 [![Next.js 15](https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-Production-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
-[![Vertex AI](https://img.shields.io/badge/Vertex_AI-Gemini_1.5_Pro-blue?style=for-the-badge&logo=google-cloud&logoColor=white)](https://cloud.google.com/vertex-ai)
+[![Vertex AI](https://img.shields.io/badge/Vertex_AI-Gemini_1.5_Pro-blue?style=for-the-badge&logo=google-cloud&logoColor=white)](https://cloud.google.com)
 
-**TIP** is an enterprise-grade, cloud-native intelligence engine designed to ingest, harmonize, and analyze fragmented transcript datasets at scale. It transforms unstructured conversational data into analytics-ready insights using advanced schema dynamic classification and Vertex AI enrichment.
-
----
-
-## 🔗 Live Links
-
-* **Live Demo Dashboard**: [https://tip-frontend-509380768243.us-central1.run.app](https://tip-frontend-509380768243.us-central1.run.app)
-* **Production API**: [https://tip-backend-509380768243.us-central1.run.app/api/v1](https://tip-backend-509380768243.us-central1.run.app/api/v1)
+Welcome to **TIP**! We built this platform to solve a common headache in big companies: having thousands of meeting transcripts scattered everywhere in different formats. TIP is an enterprise-grade engine that "cleans up" this mess—ingesting, harmonizing, and analyzing fragmented data so you can actually use it for insights.
 
 ---
 
-## 🚀 Vision
-In the modern enterprise, transcripts are scattered across different platforms, formats, and schemas. **TIP** provides the "Single Pane of Glass" for conversational intelligence by:
-1.  **Harmonizing** inconsistent structures into a unified schema.
-2.  **Resolving** speaker identities across disparate data sources.
-3.  **Enriching** conversations with AI-generated summaries and sentiment analysis.
-4.  **Operationalizing** data for downstream BI and LLM fine-tuning via Parquet.
+## 🏗️ How it Works (The Architecture)
 
----
-
-## 🏗️ Architecture
+We designed TIP with a modular, scalable architecture. It basically acts as a smart pipeline that takes messy raw data and turns it into structured, AI-enriched knowledge.
 
 ```mermaid
 graph TD
     A[Data Sources: Local/GCS] --> B[Ingestion Engine]
-    B --> C{Classifier}
+    B --> C{Smart Classifier}
     C -->|Transcript| D[Harmonizer]
     C -->|Metadata| E[Metadata Processor]
     C -->|Mapping| F[Speaker Resolver]
@@ -39,99 +25,88 @@ graph TD
     H --> I[Parquet Writer]
     I --> J[(Analytics Dataset)]
     
-    K[Next.js 15 Dashboard] -->|API| L[FastAPI Backend]
+    K[Modern Next.js Dashboard] -->|API| L[FastAPI Backend]
     L --> J
 ```
 
 ---
 
-## 🛠️ Tech Stack
-
-### Backend (The Intelligence Layer)
-- **FastAPI**: High-performance async API framework.
-- **Polars & Pandas**: Blazing fast data manipulation and Parquet generation.
-- **Vertex AI (Gemini 1.5 Pro)**: Automated summarization and sentiment extraction.
-- **Google Cloud Storage**: Scalable cloud-native blob storage.
-
-### Frontend (The Observability Layer)
-- **Next.js 15 (App Router)**: The foundation of the interactive dashboard.
-- **Tailwind CSS & Shadcn/UI**: Modern, vibrant, and accessible UI components.
-- **React Flow**: Animated pipeline visualization for operational transparency.
-- **Lucide React**: Clean, consistent enterprise iconography.
+## 🚀 Why we built this
+Most companies have transcripts, but they're often unusable because:
+1.  **They don't match**: Every tool exports data differently. We **harmonize** them.
+2.  **Who is talking?**: Speaker IDs are often inconsistent. We **resolve** them.
+3.  **Information Overload**: Nobody can read 1,000 transcripts. We use **Vertex AI** to summarize them and detect sentiment automatically.
+4.  **Ready for Analysis**: We save everything as **Parquet** files, making it easy for data scientists to plug into BigQuery or LLMs.
 
 ---
 
-## ⚡ Quick Start
+## 🛠️ Our Tech Stack
 
-### 1. Environment Configuration
-Create a `.env` file in the root directory:
+### The Brain (Backend)
+- **FastAPI**: To keep things fast and asynchronous.
+- **Polars & Pandas**: For high-speed data crunching and Parquet generation.
+- **Vertex AI (Gemini 1.5 Pro)**: The "magic" layer for automated summaries and sentiment.
+- **Google Cloud Storage**: For reliable, cloud-native storage.
+
+### The Face (Frontend)
+- **Next.js 15**: A lightning-fast dashboard foundation.
+- **Tailwind CSS & Shadcn/UI**: For a sleek, premium look and feel.
+- **React Flow**: To give you a live, animated view of your data pipeline.
+- **Lucide React**: For clean, modern enterprise icons.
+
+---
+
+## ⚡ Getting Started
+
+### 1. Set up your environment
+Create a `.env` file in the root:
 ```env
 # Storage Configuration
-STORAGE_TYPE=gcs  # or 'local'
-GCP_PROJECT_ID=tip-intelligence-platform
-GCS_BUCKET_NAME=tip_dataset_1
+STORAGE_TYPE=local  # or 'gcs'
+GCP_PROJECT_ID=your-project-id
+GCS_BUCKET_NAME=your-bucket-name
 
 # Vertex AI Settings
 VERTEX_LOCATION=us-central1
 ```
 
-### 2. Local Development
+### 2. Run it locally
 ```bash
-# Install dependencies
+# Install everything
 pip install -r backend/requirements.txt
 cd frontend && npm install
 
-# Start Backend
+# Start the services
 python -m backend.main
-
-# Start Frontend
 cd frontend && npm run dev
 ```
 
-### 3. Docker Deployment
+### 3. Deploy with Docker
 ```bash
 docker-compose up --build
 ```
 
 ---
 
-## 🌩️ Google Cloud Deployment
-
-### Containerization (Cloud Run)
-```bash
-# Build and Push
-gcloud builds submit --tag gcr.io/$PROJECT_ID/tip-backend .
-
-# Deploy
-gcloud run deploy tip-backend \
-  --image gcr.io/$PROJECT_ID/tip-backend \
-  --platform managed \
-  --set-env-vars STORAGE_TYPE=gcs,GCP_PROJECT_ID=$PROJECT_ID
-```
+## 📊 The Ingestion Flow
+1.  **Scan**: We find your files wherever they hide (Local or GCS).
+2.  **Classify**: Our engine identifies the schema with over 90% confidence.
+3.  **Resolve**: We link speaker names to IDs so the data makes sense.
+4.  **Enrich**: Vertex AI reads the transcript and writes an executive summary.
+5.  **Export**: Everything is saved into optimized Parquet files.
 
 ---
 
-## 📊 Ingestion Workflow
-1.  **Scan & Discover**: Recursive scanning of GCS/Local paths.
-2.  **Dynamic Classification**: Key-based schema detection (Confidence > 90%).
-3.  **Speaker Resolution**: Cross-referencing mapping files to normalize speaker IDs.
-4.  **Vertex AI Enrichment**: Real-time generation of executive summaries.
-5.  **Parquet Export**: Optimized persistence for BigQuery/Pandas ingestion.
+## 🛡️ Reliability & Monitoring
+We built TIP to be robust. Every single error—from a missing key to a failed API call—is logged as an **Anomaly**. You can track these in real-time on the **Anomaly Hub** in the dashboard.
 
 ---
 
-## 🛡️ Observability & Anomalies
-TIP logs every schema mismatch, missing key, or API failure as a structured **Anomaly**.
-- View real-time logs in the **Dashboard Anomaly Hub**.
-- Export anomaly datasets for data-engineering remediation.
+## 🛤️ What's Next?
+- [x] Phase 1: Core Ingestion & Harmonization
+- [x] Phase 2: Vertex AI Integration
+- [x] Phase 3: Interactive Intelligence Dashboard
+- [ ] Phase 4: Real-time Data Streaming
 
 ---
-
-## 🛤️ Roadmap
-- [x] Phase 1: Local Ingestion & Harmonization
-- [x] Phase 2: GCP Native Integration & Vertex AI
-- [x] Phase 3: Next.js 15 Intelligence Dashboard
-- [ ] Phase 4: Real-time Streaming (Webhooks/Kafka)
-
----
-*Built with ❤️ for Advanced Transcript Intelligence.*
+*Built with passion for smarter data engineering.*
