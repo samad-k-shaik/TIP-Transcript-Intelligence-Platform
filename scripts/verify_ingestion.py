@@ -10,7 +10,7 @@ from backend.ingestion.ingestion_service import IngestionService
 from backend.utils.logger import logger
 
 async def main():
-    dataset_path = "/Users/abdussamad/Downloads/interview-assignment 2/dataset"
+    dataset_path = "datasets"
     if not os.path.exists(dataset_path):
         logger.error(f"Dataset path not found: {dataset_path}")
         return

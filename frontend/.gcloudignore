@@ -1,0 +1,6 @@
+.git/
+.gitignore
+node_modules/
+.next/
+# Do not ignore .env files during deployment so build can use them
+!.env*

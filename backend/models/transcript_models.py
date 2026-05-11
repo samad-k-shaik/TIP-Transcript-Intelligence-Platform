@@ -11,6 +11,7 @@ class TranscriptUtterance(BaseModel):
     utterance: str
     sentiment_score: Optional[float] = None
     source_file: str
+    dataset: Optional[str] = "default"
     metadata: Dict[str, Any] = Field(default_factory=dict)
 
 class CallMetadata(BaseModel):
@@ -22,3 +23,10 @@ class CallMetadata(BaseModel):
     end_time: Optional[str] = None
     duration: Optional[float] = None
     participants: list[str] = Field(default_factory=list)
+    summary: Optional[str] = None
+    sentiment: Optional[str] = None
+    call_type: Optional[str] = "internal calls"  # customer support calls, external calls, internal calls
+    primary_topic: Optional[str] = "General"
+    stakeholder_impact: list[str] = Field(default_factory=list)
+    dataset: Optional[str] = "default"
+

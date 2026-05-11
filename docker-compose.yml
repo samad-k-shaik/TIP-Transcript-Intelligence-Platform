@@ -6,8 +6,8 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./backend/datasets:/app/datasets
-      - ./backend/parquet:/app/parquet
-      - ./backend/logs:/app/logs
+      - ./datasets:/app/datasets
+      - ./parquet:/app/parquet
+      - ./logs:/app/logs
     environment:
       - LOG_LEVEL=INFO

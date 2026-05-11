@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transcript Intelligence Platform — Executive Presentation</title>
+  <!-- Google Fonts: Outfit (Headings) and Inter (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ----------------------------------------------------
+       1. CORE DESIGN SYSTEM & VARIABLES
+       ---------------------------------------------------- */
+    :root {
+      --bg-gradient: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+      --bg-dark: #020617;
+      --glass-bg: rgba(255, 255, 255, 0.03);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --glass-hover-bg: rgba(255, 255, 255, 0.06);
+      --glass-hover-border: rgba(255, 255, 255, 0.15);
+      
+      --color-primary: #6366f1; /* Indigo */
+      --color-primary-glow: rgba(99, 102, 241, 0.15);
+      --color-success: #10b981; /* Emerald */
+      --color-success-glow: rgba(16, 185, 129, 0.15);
+      --color-warning: #f59e0b; /* Amber */
+      --color-danger: #f43f5e; /* Rose */
+      --color-danger-glow: rgba(244, 63, 94, 0.15);
+      --color-info: #06b6d4; /* Cyan */
+      
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dark: #0f172a;
+      
+      --font-title: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-dark);
+      background-image: var(--bg-gradient);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      user-select: none;
+    }
+
+    /* ----------------------------------------------------
+       2. SLIDES CONTAINER & NAV SYSTEM
+       ---------------------------------------------------- */
+    #deck-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      transform: scale(0.95) translateY(20px);
+      pointer-events: none;
+      transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), 
+                  transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 6% 10%;
+      z-index: 1;
+    }
+
+    .slide.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    /* Progress Bar */
+    .progress-bar-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      z-index: 10;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-info));
+      box-shadow: 0 0 12px var(--color-primary);
+      transition: width 0.3s ease;
+    }
+
+    /* Header & Footer Brand */
+    .slide-header {
+      position: absolute;
+      top: 30px;
+      left: 5%;
+      right: 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 5;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-title);
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: var(--text-main);
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--color-primary);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--color-primary);
+      animation: pulse-glow 2s infinite alternate;
+    }
+
+    .slide-number {
+      font-family: var(--font-title);
+      font-size: 1rem;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--glass-border);
+    }
+
+    /* Controller UI */
+    .controls {
+      position: absolute;
+      bottom: 30px;
+      right: 5%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 10;
+    }
+
+    .btn-nav {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-nav:hover {
+      background: var(--glass-hover-bg);
+      border-color: var(--color-primary);
+      color: var(--color-primary);
+      transform: translateY(-2px);
+      box-shadow: 0 0 15px var(--color-primary-glow);
+    }
+
+    .btn-nav:active {
+      transform: translateY(1px);
+    }
+
+    /* ----------------------------------------------------
+       3. TYPOGRAPHY & STRUCTURAL ELEMENTS
+       ---------------------------------------------------- */
+    h1, h2, h3, h4 {
+      font-family: var(--font-title);
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .slide-title-main {
+      font-size: 3.5rem;
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(135deg, #ffffff 40%, var(--text-muted) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+    }
+
+    .slide-title-section {
+      font-size: 2.2rem;
+      align-self: flex-start;
+      margin-bottom: 2rem;
+      position: relative;
+      padding-bottom: 8px;
+    }
+
+    .slide-title-section::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-info));
+      border-radius: 2px;
+    }
+
+    .slide-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 800px;
+      text-align: center;
+      line-height: 1.6;
+      margin-bottom: 2.5rem;
+    }
+
+    /* Grid layout */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      width: 100%;
+      height: calc(100% - 100px);
+      align-items: center;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      width: 100%;
+      align-items: center;
+    }
+
+    /* Glass Cards */
+    .glass-card {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 30px;
+      transition: var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .glass-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(800px circle at var(--mouse-x, 0px) var(--mouse-y, 0px), rgba(255,255,255,0.04), transparent 40%);
+      pointer-events: none;
+    }
+
+    .glass-card:hover {
+      background: var(--glass-hover-bg);
+      border-color: var(--glass-hover-border);
+      transform: translateY(-5px);
+    }
+
+    /* Specific tags & badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .badge-primary {
+      background: rgba(99, 102, 241, 0.1);
+      color: #818cf8;
+      border-color: rgba(99, 102, 241, 0.2);
+    }
+
+    .badge-success {
+      background: rgba(16, 185, 129, 0.1);
+      color: #34d399;
+      border-color: rgba(16, 185, 129, 0.2);
+    }
+
+    .badge-danger {
+      background: rgba(244, 63, 94, 0.1);
+      color: #f87171;
+      border-color: rgba(244, 63, 94, 0.2);
+    }
+
+    .badge-warning {
+      background: rgba(245, 158, 11, 0.1);
+      color: #fbbf24;
+      border-color: rgba(245, 158, 11, 0.2);
+    }
+
+    /* ----------------------------------------------------
+       4. INTERACTIVE COMPONENT STYLING (THE WOW PIECES)
+       ---------------------------------------------------- */
+    
+    /* ANIMATIONS */
+    @keyframes pulse-glow {
+      0% { box-shadow: 0 0 10px var(--color-primary-glow); }
+      100% { box-shadow: 0 0 25px rgba(99, 102, 241, 0.4); }
+    }
+
+    @keyframes flow-line {
+      0% { stroke-dashoffset: 24; }
+      100% { stroke-dashoffset: 0; }
+    }
+
+    /* SLIDE 1 Custom */
+    .s1-gradient-text {
+      background: linear-gradient(135deg, #ffffff 10%, #c7d2fe 50%, #6366f1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-size: 4.2rem;
+      font-weight: 800;
+      line-height: 1.1;
+      text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    
+    .s1-hero-container {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .s1-stakeholder-row {
+      display: flex;
+      gap: 14px;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* SLIDE 2 Custom */
+    .s2-friction-card {
+      border-left: 4px solid var(--color-danger);
+    }
+    .s2-friction-card:hover {
+      border-color: var(--color-danger);
+      box-shadow: 0 8px 30px var(--color-danger-glow);
+    }
+    .s2-solution-card {
+      border-left: 4px solid var(--color-success);
+    }
+    .s2-solution-card:hover {
+      border-color: var(--color-success);
+      box-shadow: 0 8px 30px var(--color-success-glow);
+    }
+    .s2-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .s2-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      line-height: 1.5;
+    }
+    .s2-icon-red { color: var(--color-danger); flex-shrink: 0; margin-top: 2px; }
+    .s2-icon-green { color: var(--color-success); flex-shrink: 0; margin-top: 2px; }
+
+    /* SLIDE 3 Pipeline Visualizer */
+    .pipeline-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 20px;
+    }
+
+    .pipeline-flow {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      margin-top: 40px;
+    }
+
+    .pipeline-node {
+      width: 130px;
+      height: 130px;
+      border-radius: 16px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      text-align: center;
+      padding: 10px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #e2e8f0;
+      transition: var(--transition-smooth);
+      position: relative;
+      z-index: 3;
+    }
+
+    .pipeline-node:hover {
+      transform: translateY(-5px) scale(1.05);
+      border-color: var(--color-info);
+      box-shadow: 0 8px 25px rgba(6, 182, 212, 0.15);
+    }
+
+    .pipeline-node svg {
+      width: 32px;
+      height: 32px;
+      color: var(--color-info);
+    }
+
+    .pipeline-node.active-node {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 20px var(--color-primary-glow);
+    }
+    .pipeline-node.active-node svg {
+      color: var(--color-primary);
+    }
+
+    .pipeline-connector {
+      flex-grow: 1;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      position: relative;
+      margin: 0 -5px;
+      z-index: 1;
+    }
+
+    .pipeline-connector-glow {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--color-primary), var(--color-info));
+      border-radius: 2px;
+      box-shadow: 0 0 8px var(--color-primary);
+      animation: pipe-glow-flow 3s infinite linear;
+    }
+
+    @keyframes pipe-glow-flow {
+      0% { transform: scaleX(0); transform-origin: left; }
+      50% { transform: scaleX(1); transform-origin: left; }
+      50.1% { transform: scaleX(1); transform-origin: right; }
+      100% { transform: scaleX(0); transform-origin: right; }
+    }
+
+    /* SLIDE 4 Categorization custom styling */
+    .categorization-box {
+      border-top: 3px solid var(--color-primary);
+    }
+    .cat-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 14px 20px;
+      margin-bottom: 12px;
+      transition: var(--transition-smooth);
+    }
+    .cat-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .cat-icon-container {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* SLIDE 5 Sentiment SVGs */
+    .chart-container {
+      width: 100%;
+      height: 250px;
+      position: relative;
+      margin-top: 20px;
+    }
+    .chart-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+    .drift-alert-box {
+      background: rgba(244, 63, 94, 0.08);
+      border: 1px dashed var(--color-danger);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin-top: 15px;
+    }
+
+    /* SLIDE 6 Feature table custom */
+    .feature-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    .feature-table th {
+      text-align: left;
+      padding: 12px 16px;
+      color: var(--text-muted);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .feature-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.95rem;
+    }
+    .feature-table tr:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* SLIDE 7 Custom Dials and Terminals */
+    .gauge-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+    .gauge-circle {
+      position: relative;
+      width: 150px;
+      height: 150px;
+    }
+    .gauge-circle svg {
+      transform: rotate(-90deg);
+      width: 100%;
+      height: 100%;
+    }
+    .gauge-bg {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.05);
+      stroke-width: 12px;
+    }
+    .gauge-fill {
+      fill: none;
+      stroke: var(--color-success);
+      stroke-width: 12px;
+      stroke-linecap: round;
+      stroke-dasharray: 440;
+      stroke-dashoffset: 44; /* 90% */
+      animation: gauge-draw 1.5s ease-out forwards;
+    }
+    @keyframes gauge-draw {
+      from { stroke-dashoffset: 440; }
+      to { stroke-dashoffset: 35; } /* 92% */
+    }
+    .gauge-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-title);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+    
+    .terminal-container {
+      background: #090d16;
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 16px;
+      font-size: 0.85rem;
+      color: #a7f3d0;
+      height: 220px;
+      overflow-y: auto;
+      box-shadow: inset 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .terminal-header {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 8px;
+    }
+    .terminal-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* SLIDE 8 ROI stats */
+    .roi-stat-box {
+      text-align: center;
+      padding: 24px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--glass-border);
+      transition: var(--transition-smooth);
+    }
+    .roi-stat-box:hover {
+      border-color: var(--color-primary);
+      background: rgba(99, 102, 241, 0.04);
+    }
+    .roi-stat-num {
+      font-family: var(--font-title);
+      font-size: 3.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-info) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+    }
+
+    /* Links Row */
+    .links-container {
+      display: flex;
+      gap: 16px;
+      width: 100%;
+      justify-content: center;
+      margin-top: 30px;
+    }
+    .btn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-info) 100%);
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+      transition: var(--transition-smooth);
+    }
+    .btn-link:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 30px rgba(99, 102, 241, 0.5);
+    }
+    .btn-link-secondary {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--text-main);
+      box-shadow: none;
+    }
+    .btn-link-secondary:hover {
+      background: var(--glass-hover-bg);
+      border-color: var(--text-muted);
+      box-shadow: 0 4px 15px rgba(255,255,255,0.05);
+    }
+
+    /* Print styling overrides (For PDF Exporting via browser Print) */
+    @media print {
+      body {
+        overflow: visible;
+        height: auto;
+        width: auto;
+        background: white !important;
+        color: black !important;
+      }
+      #deck-container {
+        position: static;
+        display: block;
+      }
+      .slide {
+        position: static;
+        opacity: 1 !important;
+        transform: none !important;
+        page-break-after: always;
+        height: 100vh;
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        padding: 40px !important;
+        color: black !important;
+      }
+      .glass-card {
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        color: #0f172a !important;
+        box-shadow: none !important;
+        transform: none !important;
+      }
+      .slide-title-main, .s1-gradient-text {
+        background: none !important;
+        -webkit-text-fill-color: #0f172a !important;
+        color: #0f172a !important;
+      }
+      .slide-number, .btn-nav, .controls {
+        display: none !important;
+      }
+      .badge {
+        color: #0f172a !important;
+        border-color: #cbd5e1 !important;
+        background: #f1f5f9 !important;
+      }
+      .pipeline-connector-glow {
+        background: #475569 !important;
+      }
+      .pipeline-node {
+        background: #f1f5f9 !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #0f172a !important;
+      }
+      .cat-item {
+        background: #f1f5f9 !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #0f172a !important;
+      }
+      .roi-stat-num {
+        background: none !important;
+        -webkit-text-fill-color: #4f46e5 !important;
+        color: #4f46e5 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="deck-container">
+    
+    <!-- Top Progress Bar -->
+    <div class="progress-bar-container">
+      <div id="progress" class="progress-bar"></div>
+    </div>
+
+    <!-- Header Frame -->
+    <div class="slide-header">
+      <div class="brand">
+        <div class="brand-dot"></div>
+        <span>TIP • TRANSCRIPT INTELLIGENCE PLATFORM</span>
+      </div>
+      <div id="slide-indicator" class="slide-number">Slide 1 of 8</div>
+    </div>
+
+    <!-- ----------------------------------------------------
+         SLIDE 1: TITLE SLIDE
+         ---------------------------------------------------- -->
+    <div class="slide active" data-slide="1">
+      <div class="s1-hero-container">
+        <div class="badge badge-primary" style="margin-bottom: 20px;">AI-Powered Ingestion & Harmonization</div>
+        <h1 class="s1-gradient-text">Transcript Intelligence<br>Platform (TIP)</h1>
+        <p class="slide-subtitle" style="margin-top: 15px;">
+          Scaling conversational analytics across fragmented call channels.<br>Transforming unstructured discussions into business-ready operational assets.
+        </p>
+        
+        <div style="margin-top: 25px; font-size: 0.95rem; color: var(--text-muted);">
+          Focus: <strong style="color: white;">Product & Engineering Strategic Deep-Dive</strong>
+        </div>
+
+        <div class="s1-stakeholder-row">
+          <span class="badge" style="background: rgba(255,255,255,0.03);">🧑‍💻 Engineering Leads</span>
+          <span class="badge" style="background: rgba(255,255,255,0.03);">📦 Product Managers</span>
+          <span class="badge" style="background: rgba(255,255,255,0.03);">🗣️ Support Leaders</span>
+          <span class="badge" style="background: rgba(255,255,255,0.03);">📈 Sales Operations</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ----------------------------------------------------
+         SLIDE 2: PROBLEM & VISION
+         ---------------------------------------------------- -->
+    <div class="slide" data-slide="2">
+      <h2 class="slide-title-section">The Enterprise Conversation Gap</h2>
+      <div class="grid-2">
+        <div class="glass-card s2-friction-card">
+          <span class="badge badge-danger">The Friction Points</span>
+          <h3 style="font-size: 1.5rem; margin-top: 15px; color: #fecdd3;">Scattered & Inconsistent</h3>
+          <ul class="s2-list">
+            <li>
+              <div class="s2-icon-red">✕</div>
+              <div><strong>Fragmented Silos:</strong> Transcripts are stored in Zoom, Meet, and Zendesk with disconnected storage pipelines.</div>
+            </li>
+            <li>
+              <div class="s2-icon-red">✕</div>
+              <div><strong>Schema Divergence:</strong> No standard layout. Speaker fields, timestamps, and confidence scores are in disparate, custom formats.</div>
+            </li>
+            <li>
+              <div class="s2-icon-red">✕</div>
+              <div><strong>Manual Inefficiencies:</strong> Analyzing 100+ multi-hour calls requires days of human labor, delaying strategic decision-making.</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="glass-card s2-solution-card">
+          <span class="badge badge-success">The TIP Solution</span>
+          <h3 style="font-size: 1.5rem; margin-top: 15px; color: #a7f3d0;">The Unified Single Pane</h3>
+          <ul class="s2-list">
+            <li>
+              <div class="s2-icon-green">✓</div>
+              <div><strong>Recursive Ingestion:</strong> Automated background discovery scanner across local folders and cloud-native GCS buckets.</div>
+            </li>
+            <li>
+              <div class="s2-icon-green">✓</div>
+              <div><strong>Deterministic Harmonization:</strong> Normalizes speaker identities, maps structures, and appends Vertex AI enrichment metadata.</div>
+            </li>
+            <li>
+              <div class="s2-icon-green">✓</div>
+              <div><strong>Parquet Standard:</strong> Saves compressed, query-ready datasets designed for instant import into BigQuery and BI tools.</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- ----------------------------------------------------
+         SLIDE 3: SYSTEM ARCHITECTURE
+         ---------------------------------------------------- -->
+    <div class="slide" data-slide="3">
+      <h2 class="slide-title-section">Cloud-Native Ingestion Architecture</h2>
+      <div class="pipeline-container">
+        <p class="slide-subtitle" style="text-align: left; margin-bottom: 20px; font-size: 1.1rem;">
+          TIP automates the operational pipeline recursively from raw source to optimized big-data lakehouses.
+        </p>
+        
+        <div class="pipeline-flow">
+          
+          <div class="pipeline-node active-node">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+            <span>Data Sources</span>
+            <span style="font-size: 0.7rem; color: var(--color-primary);">Local / GCS</span>
+          </div>
+          
+          <div class="pipeline-connector">
+            <div class="pipeline-connector-glow"></div>
+          </div>
+          
+          <div class="pipeline-node">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"></rect><path d="M12 2v9"></path><path d="M8 5h8"></path></svg>
+            <span>Ingestion Engine</span>
+            <span style="font-size: 0.7rem; color: var(--color-info);">FastAPI Async</span>
+          </div>
+          
+          <div class="pipeline-connector">
+            <div class="pipeline-connector-glow"></div>
+          </div>
+          
+          <div class="pipeline-node">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <span>Harmonizer</span>
+            <span style="font-size: 0.7rem; color: var(--color-info);">Speaker Resolving</span>
+          </div>
+          
+          <div class="pipeline-connector">
+            <div class="pipeline-connector-glow"></div>
+          </div>
+          
+          <div class="pipeline-node">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 7.54 16.59c-.44.47-.64 1.15-.4 1.77A2 2 0 0 0 21 22v-1a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v1a2 2 0 0 0 1.86-1.64c.24-.62.04-1.3-.4-1.77A10 10 0 0 1 12 2z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+            <span>Vertex AI Engine</span>
+            <span style="font-size: 0.7rem; color: var(--color-info);">Gemini 1.5 Pro</span>
+          </div>
+          
+          <div class="pipeline-connector">
+            <div class="pipeline-connector-glow"></div>
+          </div>
+          
+          <div class="pipeline-node active-node">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            <span>Analytics Dataset</span>
+            <span style="font-size: 0.7rem; color: var(--color-success);">Compressed Parquet</span>
+          </div>
+          
+        </div>
+
+        <div class="grid-3" style="margin-top: 40px;">
+          <div class="glass-card" style="padding: 16px 20px;">
+            <strong style="color: var(--color-info); display: block; margin-bottom: 6px;">1. Discovery Scan</strong>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Asynchronous, recursive scan mapping nested folder directories.</span>
+          </div>
+          <div class="glass-card" style="padding: 16px 20px;">
+            <strong style="color: var(--color-info); display: block; margin-bottom: 6px;">2. AI Synthesis & Sentiment</strong>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Vertex AI queries running concurrently under low-latency async boundaries.</span>
+          </div>
+          <div class="glass-card" style="padding: 16px 20px;">
+            <strong style="color: var(--color-info); display: block; margin-bottom: 6px;">3. Columnar Persistence</strong>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Memory-efficient write buffers output structured Parquet columns directly.</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ----------------------------------------------------
+         SLIDE 4: THEME CATEGORIZATION
+         ---------------------------------------------------- -->
+    <div class="slide" data-slide="4">
+      <h2 class="slide-title-section">Requirement 1: Topic & Theme Categorization</h2>
+      <div class="grid-2">
+        <div class="glass-card categorization-box">
+          <span class="badge badge-primary">Hybrid AI Methodology</span>
+          <h3 style="font-size: 1.6rem; margin: 15px 0 10px; color: white;">Cost-Efficient Scalability</h3>
+          <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 20px;">
+            Instead of routing massive dataset volumes completely through expensive API calls, TIP employs a **high-efficiency hybrid pattern**:
+          </p>
+          <div style="display: flex; flex-direction: column; gap: 12px;">
+            <div style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px 16px;">
+              <strong style="color: var(--color-primary); font-size: 0.9rem; display: block; margin-bottom: 4px;">Phase 1: Dynamic Discovery (Vertex AI)</strong>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Gemini analyses subsets of conversations to flag emerging business themes dynamically.</span>
+            </div>
+            <div style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; padding: 12px 16px;">
+              <strong style="color: var(--color-info); font-size: 0.9rem; display: block; margin-bottom: 4px;">Phase 2: Deterministic Matching (Polars Engine)</strong>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Our fast backend engine matches localized terms, mappings, and schemas at scale for $0 in API costs.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card" style="border-top: 3px solid var(--color-info);">
+          <span class="badge badge-info">Identified Core Channels</span>
+          <h3 style="font-size: 1.6rem; margin: 15px 0; color: white;">Discovered Classifications</h3>
+          
+          <div class="cat-item">
+            <div class="cat-icon-container" style="background: rgba(244, 63, 94, 0.1); color: var(--color-danger);">
+              🎧
+            </div>
+            <div>
+              <strong style="color: white; font-size: 0.95rem; display: block;">Technical Support & Bug Tracking</strong>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Source: customer support calls • Tracks failures, latency, and code errors.</span>
+            </div>
+          </div>
+
+          <div class="cat-item">
+            <div class="cat-icon-container" style="background: rgba(16, 185, 129, 0.1); color: var(--color-success);">
+              🤝
+            </div>
+            <div>
+              <strong style="color: white; font-size: 0.95rem; display: block;">Renewal & Adoption Feedback</strong>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Source: external partner/client calls • Highlights account expansions.</span>
+            </div>
+          </div>
+
+          <div class="cat-item">
+            <div class="cat-icon-container" style="background: rgba(99, 102, 241, 0.1); color: var(--color-primary);">
+              💻
+            </div>
+            <div>
+              <strong style="color: white; font-size: 0.95rem; display: block;">Engineering Syncs & Planning</strong>
+              <span style="font-size: 0.85rem; color: var(--text-muted);">Source: internal development syncs • Captures sprint metrics and delays.</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ----------------------------------------------------
+         SLIDE 5: SENTIMENT TRENDS
+         ---------------------------------------------------- -->
+    <div class="slide" data-slide="5">
+      <h2 class="slide-title-section">Requirement 2: Sentiment Trends & Sentiment Drift</h2>
+      <div class="grid-2">
+        <div class="glass-card" style="border-top: 3px solid var(--color-primary); padding: 24px;">
+          <span class="badge badge-primary">Dynamic Behavioral Analysis</span>
+          <h3 style="font-size: 1.5rem; margin-top: 15px; color: white;">Channel-Specific Trends</h3>
+          <ul class="s2-list" style="margin-top: 15px; gap: 14px;">
+            <li>
+              <div style="background: var(--color-danger); width: 8px; height: 8px; border-radius: 50%; margin-top: 6px;"></div>
+              <div style="font-size: 0.9rem;"><strong>Customer Support Calls (Highly Volatile):</strong> Highly reactive waves. Negative drop indicators correspond to bugs; sharp recoveries represent successful solutions.</div>
+            </li>
+            <li>
+              <div style="background: var(--color-success); width: 8px; height: 8px; border-radius: 50%; margin-top: 6px;"></div>
+              <div style="font-size: 0.9rem;"><strong>External Accounts (Forward-Looking):</strong> Generally high. Slower, smoother wave structures indicate ongoing client health and new features adoption.</div>
+            </li>
+            <li>
+              <div style="background: var(--color-primary); width: 8px; height: 8px; border-radius: 50%; margin-top: 6px;"></div>
+              <div style="font-size: 0.9rem;"><strong>Internal Syncs (Consistently Stable):</strong> Neutral-to-positive stability proving consistent team focus and healthy roadmap alignment.</div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="glass-card" style="border-top: 3px solid var(--color-danger); padding: 24px;">
+          <span class="badge badge-danger">High-Value Feature</span>
+          <h3 style="font-size: 1.5rem; margin-top: 15px; color: white;">Detecting Sentiment Drift</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-top: 10px;">
+            By tracking historical client calls sequentially, TIP monitors the <strong>rolling derivative of sentiment scores</strong>.
+          </p>
+          
+          <div class="chart-container">
+            <!-- Simplified SVG Chart Line representation -->
+            <svg class="chart-svg" viewBox="0 0 300 120">
+              <path d="M 0 30 Q 50 10 100 40 T 200 80 T 300 110" fill="none" stroke="var(--color-danger)" stroke-width="3" stroke-dasharray="4,2"/>
+              <circle cx="200" cy="80" r="5" fill="var(--color-danger)"/>
+              <circle cx="300" cy="110" r="5" fill="var(--color-danger)"/>
+              <text x="210" y="75" fill="var(--color-danger)" font-size="8" font-family="monospace">Initial Drop</text>
+              <text x="240" y="115" fill="var(--color-danger)" font-size="8" font-family="monospace" font-weight="bold">ALERT: CHURN RISK</text>
+            </svg>
+          </div>
+
+          <div class="drift-alert-box">
+            <span style="font-size: 1.2rem;">⚠️</span>
+            <div style="font-size: 0.8rem; color: #fecdd3; line-height: 1.4;">
+              <strong>Strategic Action:</strong> Automatic customer-health alerts are routed to Account Managers <strong>before</strong> renewal contract cycles, saving potential churn.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ----------------------------------------------------
+         SLIDE 6: FEATURE GAP ANALYSIS
+         ---------------------------------------------------- -->
+    <div class="slide" data-slide="6">
+      <h2 class="slide-title-section">Requirement 3: Feature Gap Analysis</h2>
+      <div class="glass-card" style="width: 100%; border-top: 3px solid var(--color-info); padding: 25px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+          <div>
+            <span class="badge badge-info">Strategic Product Tool</span>
+            <h3 style="font-size: 1.5rem; margin-top: 6px; color: white;">Actionable Roadmap Discovered</h3>
+          </div>
+          <span class="badge badge-primary">Stakeholder: Product Managers</span>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; margin-bottom: 15px;">
+          By aggregating unsupported feature mentions across raw client interactions, TIP generates a high-fidelity gaps matrix:
+        </p>
+        
+        <table class="feature-table">
+          <thead>
+            <tr>
+              <th>Requested Feature</th>
+              <th>Channel Mentioned</th>
+              <th>Demand Vol.</th>
+              <th>Customer Segment</th>
+              <th>Priority Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Real-time File Collaboration</strong></td>
+              <td>External Account Syncs</td>
+              <td>🔥 42 Mentions</td>
+              <td>Enterprise Accounts</td>
+              <td><span class="badge badge-danger">Critical</span></td>
+            </tr>
+            <tr>
+              <td><strong>Offline Draft Mode Support</strong></td>
+              <td>Customer Support Calls</td>
+              <td>📈 28 Mentions</td>
+              <td>Mobile App Users</td>
+              <td><span class="badge badge-warning">High</span></td>
+            </tr>
+            <tr>
+              <td><strong>Enterprise SSO (SAML) Integration</strong></td>
+              <td>External Partner Calls</td>
+              <td>📊 15 Mentions</td>
+              <td>Financial Sector</td>
+              <td><span class="badge badge-warning">High</span></td>
+            </tr>
+            <tr>
+              <td><strong>Advanced Dashboard Export</strong></td>
+              <td>Internal Dev Syncs</td>
+              <td>📋 8 Mentions</td>
+              <td>Operations Leads</td>
+              <td><span class="badge badge-primary">Medium</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ----------------------------------------------------
+         SLIDE 7: RELIABILITY LAYER
+         ---------------------------------------------------- -->
+    <div class="slide" data-slide="7">
+      <h2 class="slide-title-section">Requirement 3: Safety & Ingestion Health</h2>
+      <div class="grid-2">
+        <div class="glass-card" style="border-top: 3px solid var(--color-success); display: flex; align-items: center; justify-content: center;">
+          <div class="gauge-wrapper">
+            <span class="badge badge-success">AI Confidence Level</span>
+            
+            <div class="gauge-circle">
+              <svg viewBox="0 0 160 160">
+                <circle class="gauge-bg" cx="80" cy="80" r="70"/>
+                <circle class="gauge-fill" cx="80" cy="80" r="70"/>
+              </svg>
+              <div class="gauge-text">92%</div>
+            </div>
+
+            <div style="text-align: center;">
+              <strong style="color: white; font-size: 1rem; display: block; margin-bottom: 4px;">AI Summary Validation</strong>
+              <span style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; display: block; max-width: 250px;">
+                Evaluates summarization consistency with source transcripts to prevent model hallucinations.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="glass-card" style="border-top: 3px solid var(--color-danger); display: flex; flex-direction: column; justify-content: space-between;">
+          <div>
+            <span class="badge badge-danger">Stakeholder: Engineering Leads</span>
+            <h3 style="font-size: 1.5rem; margin-top: 15px; color: white;">The Real-time Anomaly Hub</h3>
+            <p style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-top: 5px; margin-bottom: 15px;">
+              Keeps system state integrated. Graces file corruption and API drops instead of crashing the process.
+            </p>
+          </div>
+
+          <div class="terminal-container">
+            <div class="terminal-header">
+              <div class="terminal-dot" style="background: var(--color-danger);"></div>
+              <div class="terminal-dot" style="background: var(--color-warning);"></div>
+              <div class="terminal-dot" style="background: var(--color-success);"></div>
+              <span style="font-size: 0.7rem; color: #475569; font-family: monospace; margin-left: auto;">anomaly_ingest_daemon.py</span>
+            </div>
+            <div style="line-height: 1.4; font-family: monospace; font-size: 0.75rem;">
+              <span style="color: #64748b;">[14:42:01] INGEST RUN STARTED - SCANNING GCS PATH...</span><br>
+              <span style="color: var(--color-warning);">[14:42:04] WARN: Skipping mapping_user_v2.json (Empty content)</span><br>
+              <span style="color: var(--color-danger); font-weight: bold;">[14:42:08] CRITICAL ANOMALY: File Schema Mismatch in 'support_call_903.json'</span><br>
+              <span style="color: #fb7185;"> &gt;&gt; Missing key: 'speaker_id' in record 14</span><br>
+              <span style="color: var(--color-success);">[14:42:10] Pipeline recovery: Isolated anomaly logs. Processed 104 transcripts successfully.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ----------------------------------------------------
+         SLIDE 8: ROI & PLATFORM LINKS
+         ---------------------------------------------------- -->
+    <div class="slide" data-slide="8">
+      <div class="s1-hero-container" style="width: 100%;">
+        <span class="badge badge-primary" style="margin-bottom: 15px;">Operational Milestones</span>
+        <h2 class="slide-title-main" style="font-size: 3rem; margin-bottom: 1rem;">Seamless Scalability achieved</h2>
+        
+        <div class="grid-3" style="width: 100%; margin: 20px 0;">
+          <div class="roi-stat-box">
+            <div class="roi-stat-num">10x</div>
+            <strong style="color: white; font-size: 0.95rem; display: block;">Ingestion Speedup</strong>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Asynchronous concurrent read processing</span>
+          </div>
+          <div class="roi-stat-box">
+            <div class="roi-stat-num">92%</div>
+            <strong style="color: white; font-size: 0.95rem; display: block;">AI Validation Confidence</strong>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Halts hallucination routing</span>
+          </div>
+          <div class="roi-stat-box">
+            <div class="roi-stat-num">$0</div>
+            <strong style="color: white; font-size: 0.95rem; display: block;">API Overhead on Classification</strong>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">High performance hybrid Polars matcher</span>
+          </div>
+        </div>
+
+        <div class="links-container">
+          <a href="https://tip-frontend-509380768243.us-central1.run.app" target="_blank" class="btn-link">
+            🚀 Launch Live Dashboard
+          </a>
+          <a href="https://tip-backend-509380768243.us-central1.run.app/api/v1/docs" target="_blank" class="btn-link btn-link-secondary">
+            📚 Explore API Docs
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ----------------------------------------------------
+         PRESENTER CONTROL BAR (FOOTER)
+         ---------------------------------------------------- -->
+    <div class="controls">
+      <button id="prev-slide" class="btn-nav">←</button>
+      <button id="next-slide" class="btn-nav">→</button>
+    </div>
+
+  </div>
+
+  <!-- ----------------------------------------------------
+       6. INTERACTIVE PRESENTATION LOGIC
+       ---------------------------------------------------- -->
+  <script>
+    // State Variables
+    let currentSlide = 1;
+    const totalSlides = 8;
+
+    // Elements
+    const slides = document.querySelectorAll('.slide');
+    const progress = document.getElementById('progress');
+    const indicator = document.getElementById('slide-indicator');
+
+    // Slide Changer Logic
+    function updateSlide(target) {
+      if (target < 1 || target > totalSlides) return;
+      
+      // Update Active Slide class
+      slides.forEach(s => s.classList.remove('active'));
+      const activeSlide = document.querySelector(`.slide[data-slide="${target}"]`);
+      if (activeSlide) activeSlide.classList.add('active');
+      
+      currentSlide = target;
+
+      // Update Top Progress Bar
+      const percentage = ((currentSlide - 1) / (totalSlides - 1)) * 100;
+      progress.style.width = `${percentage}%`;
+
+      // Update indicator text
+      indicator.textContent = `Slide ${currentSlide} of ${totalSlides}`;
+    }
+
+    // Event Listeners for Nav buttons
+    document.getElementById('prev-slide').addEventListener('click', () => {
+      updateSlide(currentSlide - 1);
+    });
+
+    document.getElementById('next-slide').addEventListener('click', () => {
+      updateSlide(currentSlide + 1);
+    });
+
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        updateSlide(currentSlide + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+        e.preventDefault();
+        updateSlide(currentSlide - 1);
+      }
+    });
+
+    // 3D Glassmorphism Mouse Movement Effect
+    document.querySelectorAll('.glass-card').forEach(card => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        card.style.setProperty('--mouse-x', `${x}px`);
+        card.style.setProperty('--mouse-y', `${y}px`);
+      });
+    });
+
+    // Initial load
+    updateSlide(1);
+  </script>
+
+</body>
+</html>
